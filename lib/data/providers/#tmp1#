@@ -1,0 +1,56 @@
+
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class BroadcastAPI {
+  static const String baseURL = "https://lichess.org/api/broadcast";
+
+  // Get a list of official broadcasts
+  Future<List<dynamic>> getOfficialBroadcasts() async {
+    final response = await http.get(Uri.parse("$BASE_URL"));
+    final json = jsonDecode(response.body);
+    return json["list"];
+  }
+
+  // Get rounds in a broadcast
+  Future<List<dynamic>> getRounds(String id) async {
+    final response = await http.get(Uri.parse("$BASE_URL/$id"));
+    final json = jsonDecode(response.body);
+    return json["rounds"];
+  }
+
+  // Stream games in a round
+  Stream<dynamic> streamGames(String id, int round) {
+    final streamController = StreamController<dynamic>();
+    http.get(Uri.parse("$BASE_URL/$id/$round/stream"))
+        .asStream()
+        .transform(utf8.decoder)
+        .transform(LineSplitter())
+        .listen((line) {
+      if (line.isNotEmpty) {
+        final json = jsonDecode(line);
+        streamController.add(json);
+      }
+    });
+    return streamController.stream;
+  }
+}
+
+
+
+
+  print('begin');
+  var sreq = http.Request("GET",
+      Uri.parse('https://lichess.org/api/stream/broadcast/round/3bWYqYgy.pgn'));
+  print('starting');
+  var sres = await sreq.send();
+  sreq.send().asStream();
+  Future.delayed(const Duration());
+  return;
+  print('listening');
+  sres.stream
+      .transform(utf8.decoder)
+      .listen((data) => print("data:${data}\n\n\n\n"));
+
+  // print(res.body);
