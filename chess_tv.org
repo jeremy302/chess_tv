@@ -1,10 +1,10 @@
 #+Title: Chess TV
 
+
 * Introduction
 Chess TV, a revolutionary new app for chess enthusiasts everywhere. With Chess TV, you can now stream games and watch the chessboards from one central location, making it easier than ever to stay up-to-date on the latest games and strategies.
 
 Features:
-
     Live streaming of chess games
     Ability to watch games in a mini-window that is always on top of other programs
     Mini-window is semi-transparent and can be placed in a corner of the screen, making it convenient to watch while working on other tasks
@@ -17,27 +17,24 @@ Chess TV is the ultimate tool for chess fans looking to stay on top of the lates
 
 * Features
 + Sources
-  + [ ] Broadcast
+  + [X] Broadcast
   + [ ] Lichess TV
   + [ ] Chess.com
-+ Have Picture-in-Picture support
++ [ ] Have Picture-in-Picture support
 
 
 * Architecture
-I'd use the "clean" Architecture.
-I pondered
+The project makes use of the "clean" architecture.
+it consists of 4 layers:
++ data providers
++ repositories
++ domain
++ blocs
++ UI
 
-** Folder Structure
-+ lib
-  + main.dart
-  + src
-    + core
-    + data
-    + domain
-    + presentation
 * Frontend
-
 ** Libraries
+some of these haven't been used yet
 + bloc :: for BLoC state management
 + flutter_bloc :: state management
 + bloc_test :: for testing bloc
@@ -56,3 +53,12 @@ I pondered
 + tab_container :: for tabs
   https://pub.dev/packages/tab_container
   see https://fluttergems.dev/tab/ for more options
+
+* Screenshots
+[[./screenshots/home_1.png]]
+
+[[./screenshots/home_2.png]]
+
+[[./screenshots/rounds_1.png]]
+
+[[./screenshots/rounds_1.png]]
