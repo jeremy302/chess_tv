@@ -1,30 +1,59 @@
 import 'dart:async';
+import 'package:dartchess/dartchess.dart';
 
+// repository containing Broadcasts functionality
 abstract class BroadcastRepository {
   BroadcastRepository();
   Future<List<BroadcastTour>> getBroadcastTours();
   Future<List<BroadcastTour>> getBroadcastRounds(BroadcastTour broadcast);
   Future<List<BroadcastTour>> getBroadcastRoundGames(BroadcastRound round);
-  Future<Stream<String>> streamBroadcastRound(BroadcastRound round);
+  Future<Stream<BroadcastRoundGame>> streamBroadcastRound(BroadcastRound round);
 }
 
-enum BroadcastGameResult { ongoing, whiteWon, blackWon, draw }
+enum BroadcastGameResult { pending, whiteWon, blackWon, draw }
 
-/// Info about a game in a round. it doesn't contain game moves
-class BroadcastRoundGame {
-  final String id, name, url;
-  final bool ongoing;
-  final DateTime date;
+// class BroadcastGameSnapshot{
+//   String fen;
+//   Duration time;
+// }
+class BroadcastRoundStreamData {
+  final String fen, white, black;
+  final double? eval;
+  final Duration whiteTime, blackTime;
   final BroadcastGameResult result;
-
-  BroadcastRoundGame({
-    required this.id,
-    required this.name,
+  BroadcastRoundStreamData({
+    required this.fen,
+    required this.white,
+    required this.black,
+    required this.eval,
+    required this.whiteTime,
+    required this.blackTime,
     required this.result,
-    required this.url,
-    required this.ongoing,
-    required this.date,
   });
+}
+
+/// Info about a game in a round.
+class BroadcastRoundGame {
+  final PgnGame pgn;
+  late final String id, whiteName, blackName;
+  late final double whiteElo, blackElo;
+  late final BroadcastGameResult result;
+
+  BroadcastRoundGame(this.pgn) {
+    whiteName = pgn.headers['White'] ?? '';
+    blackName = pgn.headers['Black'] ?? '';
+    id = whiteName + blackName;
+    whiteElo = double.parse(pgn.headers['WhiteElo'] ?? '0');
+    blackElo = double.parse(pgn.headers['BlackElo'] ?? '0');
+
+    var resMap = {
+      '1-0': BroadcastGameResult.whiteWon,
+      '0-1': BroadcastGameResult.blackWon,
+      '1/2-1/2': BroadcastGameResult.draw
+    };
+    result =
+        resMap[pgn.headers['Result'] ?? '*'] ?? BroadcastGameResult.pending;
+  }
 }
 
 /// Info about a round
@@ -45,7 +74,7 @@ class BroadcastRound {
 
 /// Information about a broadcast.
 class BroadcastTour {
-  String id, name, slug, url, description;
+  String id, name, slug, url, description, markup;
   List<BroadcastRound> rounds;
   BroadcastTour(
       {required this.id,
@@ -53,7 +82,8 @@ class BroadcastTour {
       required this.slug,
       required this.url,
       required this.description,
-      required this.rounds});
+      required this.rounds,
+  required this.markup,});
   BroadcastRound get currentRound {
     //if (rounds.length == 0) return null;
     return rounds.firstWhere((round) => !round.finished);

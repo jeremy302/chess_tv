@@ -7,6 +7,7 @@ import './broadcasts/broadcast_bloc.dart';
 import '../../data/repositories/broadcast_repository.dart';
 import './broadcasts/broadcast_page.dart';
 
+// layout of the home page
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
   @override
@@ -15,6 +16,7 @@ class HomeLayout extends StatefulWidget {
   }
 }
 
+// state of [HomeLayout]
 class _HomeLayoutState extends State<HomeLayout> {
   @override
   build(ctx) {
